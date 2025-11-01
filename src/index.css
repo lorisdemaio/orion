@@ -1,0 +1,295 @@
+@import 'tailwindcss';
+
+:root
+{
+  --bg-color: #080808;
+  --primary-color: #001524;
+  --secondary-color: #15616d;
+  --accent-color: #f35621;
+  --text-color: #ffecd1;
+}
+
+::-webkit-scrollbar
+{
+  @apply w-0.5;
+}
+
+::-webkit-scrollbar-track
+{
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb
+{
+  @apply bg-(--primary-color);
+}
+
+*
+{
+  @apply m-0 p-0 box-border;
+}
+
+body
+{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  @apply bg-(--bg-color);
+}
+
+body, html
+{
+  @apply overflow-x-hidden;
+}
+
+/* ------------------------------------ */
+
+aside
+{
+  @apply bg-(--bg-color)/50 backdrop-blur-2xl lg:top-[50%] fixed lg:static lg:h-screen lg:w-max bottom-0 
+  left-0 w-full h-max px-2 py-5 shadow-2xl justify-center items-center transition-all 
+  duration-300;
+}
+
+nav
+{
+  @apply flex lg:flex-col flex-row justify-around lg:justify-between 
+  lg:gap-10 gap-4 w-full lg:w-max lg:h-full;
+}
+
+.sidebar-btn
+{
+  @apply bg-transparent rounded-2xl p-4 cursor-pointer border 
+  border-(--secondary-color) transition-all duration-300 
+  hover:bg-(--secondary-color) hover:scale-[95%];
+}
+
+.top
+{
+  @apply flex lg:flex-col flex-row items-center gap-4; 
+}
+
+.bottom
+{
+  @apply lg:border-t lg:border-t-(--primary-color) lg:pt-5 
+  lg:mt-5 flex lg:flex-col flex-row items-center gap-4;
+}
+
+/* ------------------------------------ */
+
+section
+{
+  @apply w-full;
+}
+
+.loading
+{
+  @apply bg-(--primary-color) fixed top-0 left-0 h-screen w-full 
+  flex justify-center items-center transition-all duration-300;
+}
+
+.overlay
+{
+  @apply bg-black/50 w-full h-screen justify-center items-center 
+  fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%];
+}
+
+.overlay > form
+{
+  @apply bg-(--primary-color) w-full lg:max-w-[500px] min-h-[200px]
+  text-(--text-color) flex flex-col justify-between items-center gap-4
+  rounded-2xl p-4;
+}
+
+.overlay > form > button, input
+{
+  @apply px-4 py-3 border border-white w-full rounded-full
+  cursor-pointer;
+}
+
+.overlay > form > button:last-child
+{
+  @apply border-red-500 text-red-500;
+}
+
+.index-container
+{
+  @apply bg-linear-to-bl from-(--primary-color) to-(--secondary-color)
+  flex flex-col justify-between items-center px-4 py-13 w-full h-screen;
+}
+
+.wrapper
+{
+  @apply bg-(--bg-color) w-full h-screen flex flex-col
+  justify-start px-4 md:px-5 lg:px-20 py-10 overflow-auto pb-[150px];
+}
+
+.home-wrapper
+{
+  @apply grid grid-cols-1 lg:grid-cols-[1fr_3fr] w-full;
+}
+
+.primary-btn
+{
+  @apply bg-(--primary-color) flex flex-row justify-center items-center 
+  w-full p-4 rounded-2xl text-(--text-color) gap-2 cursor-pointer 
+  transition-all duration-300 hover:bg-(--secondary-color);
+}
+
+.settings-btn
+{
+  @apply bg-transparent text-start p-4 cursor-pointer 
+  w-full border-t border-(--primary-color) rounded-2xl text-white
+  transition-all duration-300 hover:bg-(--primary-color)/20;
+}
+
+.settings-btn:first-child
+{
+  @apply border-t-0;
+}
+
+.settings-btn:nth-last-child(-n+2)
+{
+  @apply text-red-500 hover:bg-red-900/20;
+}
+
+.chat-list, .chat
+{
+  @apply w-full h-screen overflow-y-auto;
+}
+
+.chat-list
+{
+  @apply bg-(--bg-color) lg:border-r lg:border-(--primary-color);
+}
+
+.chat
+{
+  @apply relative;
+}
+
+.head
+{
+  @apply backdrop-blur-3xl sticky top-0
+  flex flex-row items-center px-4 py-5;
+}
+
+.head h1
+{
+  @apply text-(--text-color) text-4xl font-semibold;
+}
+
+.chat-list > .head
+{
+  @apply justify-start mt-[0.7rem];
+}
+
+.chat > .head
+{
+  @apply bg-transparent backdrop-blur-xl justify-between border-b
+  border-gray-900/20;
+}
+
+.chat-list-content
+{
+  @apply flex flex-col justify-center items-center gap-3 py-4
+  px-2;
+}
+
+.chat-content
+{
+  @apply flex flex-col gap-3 py-4 px-4 overflow-y-auto
+  h-screen;
+}
+
+.destination
+{
+  @apply flex flex-col items-start w-full gap-2;
+}
+
+.emiter
+{
+  @apply flex flex-col items-end w-full gap-2;
+}
+
+/* ------------------------------------ */
+
+.chat-form-container
+{
+  @apply bg-(--bg-color) sticky bottom-0 w-full
+  p-4 flex justify-center items-center gap-2;
+}
+
+.chat-form-container > button 
+{
+  @apply bg-(--secondary-color) p-4 rounded-full cursor-pointer 
+  h-max transition-all duration-300 hover:scale-[0.95];
+}
+
+.chat-form
+{
+  @apply flex flex-row gap-4 w-full;
+}
+
+.chat-form > input, textarea
+{
+  @apply bg-(--secondary-color) rounded-2xl text-(--text-color) p-2
+  w-full;
+}
+
+.chat-form > button
+{
+  @apply bg-(--secondary-color) p-4 rounded-full cursor-pointer 
+  h-max transition-all duration-300 hover:scale-[0.95];
+}
+
+/* ------------------------------------ */
+
+.form-container
+{
+  @apply bg-linear-to-bl from-(--primary-color) to-(--secondary-color)
+  flex  flex-col justify-around items-center mx-4 px-4 md:px-6 lg:px-8 py-10 
+  gap-4 w-full lg:max-w-[600px] min-h-[500px] rounded-2xl shadow-2xl
+  transition-all duration-300;
+}
+
+.form-container h1
+{
+  @apply text-white font-semibold text-3xl;
+}
+
+.form-container > form
+{
+  @apply flex flex-col gap-4 w-full;
+}
+
+.form-container > form > div
+{
+  @apply flex flex-col gap-2;
+}
+
+.form-container > form label
+{
+  @apply text-lg text-white;
+}
+
+.form-container > form input
+{
+  @apply text-white p-4 rounded-2xl border border-(--primary-color);
+}
+
+.form-container > form button
+{
+  @apply bg-(--primary-color) text-white font-bold p-4 rounded-2xl mt-4
+  cursor-pointer transition-all duration-300 hover:bg-(--secondary-color);
+}
+
+.form-container > form p
+{
+  @apply text-(--text-color) text-center;
+}
+
+.form-container > form a
+{
+  @apply text-(--accent-color) underline;
+}
+
+/* ------------------------------------ */
