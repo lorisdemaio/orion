@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { io } from 'socket.io-client';
 
 // components
 import Message from './message';
@@ -8,15 +7,15 @@ import Message from './message';
 // hook
 import { useUserData } from '../hook/userData';
 import { useSelectedChat } from '../hook/selectedChat';
+import { useSocket } from '../hook/socketContext';
 
 // utils
 import { fetchMessaggi } from '../utils/fetchMessaggi';
 import { fetchUploadMedia } from '../utils/fetchUploadMedia';
 
-const socket = io(import.meta.env.VITE_API_URL);
-
 export default function chatComponent() {
 
+    const socket = useSocket();
     const bottom = useRef();
     const inputFoto = useRef();
     const location = useLocation();
@@ -46,6 +45,7 @@ export default function chatComponent() {
         }
     }
 
+    // fetch messaggi
     useEffect(() => {
         const fetch = async () => {
             try 
@@ -84,6 +84,7 @@ export default function chatComponent() {
         return () => socket.off('receive_message');
     }, [selectedChat]);
 
+    // chat scroll
     useEffect(() => {
         if(messaggi.length > 4) bottom.current?.scrollIntoView({ behavior: "smooth" });
     }, [messaggi]);
@@ -92,7 +93,7 @@ export default function chatComponent() {
         <>
             <div className="chat">
                 <div className="head">
-                    <div className='flex flex-row justify-start items-center'>
+                    <div className='flex flex-row justify-start items-center gap-2'>
                         {
                             location.pathname === "/chat" ? 
                             (
@@ -153,6 +154,7 @@ export default function chatComponent() {
                         type="file"
                         name="media"
                         id="media"
+                        accept="image/*" 
                         ref={inputFoto}
                         onChange={handleUpload}
                         className='hidden'

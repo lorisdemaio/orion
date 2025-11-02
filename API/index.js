@@ -92,7 +92,6 @@ app.post('/login', async (req, res) => {
 // creazione chat
 app.post('/create-chat', async (req, res) => {
   const { id_utente1, id_utente2 } = req.body;
-  const percorso = "chat_default.webp";
   
   const conn = await db.getConnection();
   try {
@@ -116,16 +115,8 @@ app.post('/create-chat', async (req, res) => {
       return res.status(200).json({ mex: 'Chat già esistente' });
     }
 
-    const [usernames] = await conn.query(
-      `SELECT ID, username FROM utenti WHERE ID IN (?, ?)`,
-      [id_utente1, id_utente2, id_utente1, id_utente2]
-    );
-
-    const nomeChat = `Chat tra ${usernames[0].username} e ${usernames[1].username}`;
-
     const [chatResult] = await conn.query(
-      `INSERT INTO chats (nome, logo_chat, data_creazione) VALUES (?, ?, NOW())`,
-      [nomeChat, percorso]
+      `INSERT INTO chats (data_creazione) VALUES (NOW())`,
     );
 
     const chatId = chatResult.insertId;
@@ -136,8 +127,18 @@ app.post('/create-chat', async (req, res) => {
     );
 
     await conn.commit();
+    
+    const [nuovaChat] = await conn.query(
+      `
+        SELECT c.ID AS chat_id, c.nome, c.logo_chat
+        FROM chats c
+        WHERE c.ID = ?
+      `,
+      [chatId]
+    );
+    
     res.status(201).json({ mex: 'Nuova chat creata con successo', chatId, nomeChat });
-
+    io.emit('update-chatlist', nuovaChat[0]);
   } 
   catch (error) 
   {
@@ -177,14 +178,19 @@ app.get('/chat/:id', async (req, res) => {
   {
     const { id } = req.params;
     const ql = `
-      SELECT c.ID AS chat_id, c.nome, c.logo_chat,
-        mc1.ID_utente AS id_utente1,
-        mc2.ID_utente AS id_utente2
+      SELECT 
+        c.ID AS chat_id,
+        c.nome,
+        c.logo_chat,
+        u.ID AS altro_utente_id,
+        u.username AS altro_username,
+        u.foto_profilo AS altro_foto
       FROM chats AS c
       JOIN membri_chat AS mc1 ON c.ID = mc1.ID_chat
-      JOIN membri_chat AS mc2 ON c.ID = mc2.ID_chat
+      JOIN membri_chat AS mc2 ON c.ID = mc2.ID_chat AND mc2.ID_utente <> mc1.ID_utente
+      JOIN utenti AS u ON u.ID = mc2.ID_utente
       WHERE mc1.ID_utente = ?
-      AND mc2.ID_utente <> mc1.ID_utente
+      ORDER BY c.data_creazione DESC;
     `;
     const [ris] = await db.query(ql, [id]);
     res.status(200).json(ris);
@@ -208,16 +214,16 @@ app.post('/upload-media', upload.single('media'), async (req, res) => {
   }
 });
 
-// invia messaggio
+// Socket | invia messaggio
 io.on('connection', (socket) => {
   console.log('utente connesso:', socket.id);
+  
   socket.on('join_chat', (id_chat) => {
     socket.join(`chat_${id_chat}`);
   });
 
   socket.on('send_message', async (data) => {
     const { id_chat, id_utente, username, contenuto, media } = data;
-
     try 
     {
       await db.query(
@@ -268,16 +274,21 @@ app.post('/search-chat', async (req, res) => {
   {
     const { nomeChat } = req.body;
     const ql = `
-      SELECT c.ID AS chat_id, c.nome, c.logo_chat,
-          mc1.ID_utente AS id_utente1,
-          mc2.ID_utente AS id_utente2
+      SELECT 
+        c.ID AS chat_id,
+        c.nome,
+        c.logo_chat,
+        u.ID AS altro_utente_id,
+        u.username AS altro_username,
+        u.foto_profilo AS altro_foto
       FROM chats AS c
       JOIN membri_chat AS mc1 ON c.ID = mc1.ID_chat
-      JOIN membri_chat AS mc2 ON c.ID = mc2.ID_chat
-      WHERE c.nome LIKE CONCAT('%', ?, '%')
-      AND mc2.ID_utente <> mc1.ID_utente LIMIT 1;
+      JOIN membri_chat AS mc2 ON c.ID = mc2.ID_chat AND mc2.ID_utente <> mc1.ID_utente
+      JOIN utenti AS u ON u.ID = mc2.ID_utente
+      WHERE c.nome = CONCAT('%', ?, '%') OR u.username = CONCAT('%', ?, '%')
+      ORDER BY c.data_creazione DESC;
     `;
-    const [ris] = await db.query(ql, [nomeChat]);
+    const [ris] = await db.query(ql, [nomeChat, nomeChat]);
     res.status(200).json(ris);
   }
   catch(err)
@@ -323,7 +334,7 @@ app.patch('/change-chat-logo', upload.single('logoChat'), async (req, res) => {
 app.delete('/delete-chat', async (req, res) => {
   try
   {
-    const { id } = req.body;
+    const { id, id_utente } = req.body;
     const ql = "DELETE chats FROM chats WHERE ID = ?";
     await db.query(ql, [id]);
     res.status(200).json({ mex: "Chat eliminata." });

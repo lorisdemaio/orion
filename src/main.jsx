@@ -5,13 +5,16 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router'
 import { UserProvider } from './hook/userData.jsx'
 import { SelectedChatProvider } from './hook/selectedChat.jsx'
+import { SocketProvider } from './hook/socketContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <UserProvider>
         <SelectedChatProvider>
-          <App />
+          <SocketProvider>
+            <App />
+          </SocketProvider>
         </SelectedChatProvider>
       </UserProvider>
     </BrowserRouter>

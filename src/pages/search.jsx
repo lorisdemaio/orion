@@ -83,12 +83,12 @@ export default function Search() {
                                         result.map((item) => (
                                         <UserContainer
                                             key={item.chat_id}
-                                            profileImg={`${import.meta.env.VITE_API_URL}/uploads/${item.logo_chat}`}
-                                            username={item.nome}
-                                            click={() => handleUserClick(
+                                            profileImg={`${import.meta.env.VITE_API_URL}/uploads/${item.logo_chat ? item.logo_chat : item.altro_foto }`}
+                                            username={item.nome ? item.nome : item.altro_username}
+                                            click={ () => handleUserClick( 
                                                     `${item.chat_id}`, 
-                                                    `${item.logo_chat}`, 
-                                                    `${item.nome}
+                                                    `${item.logo_chat ? item.logo_chat : item.altro_foto}`, 
+                                                    `${item.nome ? item.nome : item.altro_username}
                                                 `)
                                             }
                                         />

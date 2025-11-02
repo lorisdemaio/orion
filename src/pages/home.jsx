@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // components
 import Section from "../components/section";
@@ -10,12 +10,14 @@ import ChatComponent from "../components/chatComponent";
 import useIsMobile from "../hook/useIsMobile";
 import { useUserData } from "../hook/userData";
 import { useSelectedChat } from "../hook/selectedChat";
+import { useSocket } from "../hook/socketContext";
 
 // utils
 import { fetchChat } from "../utils/fetchChat";
 
 export default function Home() {
 
+    const socket = useSocket();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
     const { userData } = useUserData();
@@ -51,6 +53,19 @@ export default function Home() {
         fetch();
     }, [userData]);
 
+    // socket.io
+    useEffect(() => {
+        const handleUpdateChatList = (payload) => {
+            setChat((prev) => [...prev, payload]);
+        };
+
+        socket.on('update-chatlist', handleUpdateChatList);
+
+        return () => {
+            socket.off('update-chatlist', handleUpdateChatList);
+        };
+    }, []);
+
     return(
         <>
             <Section
@@ -73,12 +88,12 @@ export default function Home() {
                                     chat.map((item) => (
                                         <UserContainer
                                             key={item.chat_id}
-                                            profileImg={`${import.meta.env.VITE_API_URL}/uploads/${item.logo_chat}`}
-                                            username={item.nome}
+                                            profileImg={`${import.meta.env.VITE_API_URL}/uploads/${item.logo_chat ? item.logo_chat : item.altro_foto }`}
+                                            username={item.nome ? item.nome : item.altro_username}
                                             click={ () => handleUserClick( 
                                                     `${item.chat_id}`, 
-                                                    `${item.logo_chat}`, 
-                                                    `${item.nome}
+                                                    `${item.logo_chat ? item.logo_chat : item.altro_foto}`, 
+                                                    `${item.nome ? item.nome : item.altro_username}
                                                 `)
                                             }
                                         />
