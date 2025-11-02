@@ -1,6 +1,6 @@
 ## 📸 Anteprima
 
-<img width="1867" height="886" alt="orion" src="https://github.com/user-attachments/assets/985b3a7d-77a7-4798-95c5-7d6615146b67" />
+<img width="1907" height="916" alt="Immagine 2025-11-02 120842" src="https://github.com/user-attachments/assets/c27af554-8e6d-4532-96d0-c03f878b7b0c" />
 <img width="1865" height="888" alt="o2" src="https://github.com/user-attachments/assets/1aa18ad3-4efa-4d50-8fb7-0aa626959bdb" />
 <img width="1867" height="892" alt="o3" src="https://github.com/user-attachments/assets/a28aa1b5-fa1e-42d3-bf0a-b5620849e5a2" />
 <img width="1867" height="887" alt="o4" src="https://github.com/user-attachments/assets/7ef24015-8365-449b-ae09-b259195addf0" />
